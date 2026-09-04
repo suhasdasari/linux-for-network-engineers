@@ -93,7 +93,6 @@ export function Sidebar({
 }) {
   const done = useProgress((s) => s.done);
   const toggle = useProgress((s) => s.toggle);
-  const currentPart = PAGES.find((p) => p.slug === currentSlug)?.part;
 
   const coreDone = useMemo(() => {
     const core = PAGES.filter((p) => p.core);
@@ -189,8 +188,6 @@ export function Sidebar({
             key={part.id}
             partId={part.id}
             currentSlug={currentSlug}
-            forceOpen={currentPart === part.id}
-            defaultOpen={!part.collapsed}
             onNavigate={onNavigate}
             done={done}
             onToggleDone={toggle}
@@ -209,24 +206,19 @@ export function Sidebar({
 function PartGroup({
   partId,
   currentSlug,
-  forceOpen,
-  defaultOpen,
   onNavigate,
   done,
   onToggleDone,
 }: {
   partId: PartId;
   currentSlug?: string;
-  forceOpen: boolean;
-  defaultOpen: boolean;
   onNavigate?: () => void;
   done: Record<string, boolean>;
   onToggleDone: (slug: string) => void;
 }) {
   const part = PARTS.find((p) => p.id === partId)!;
   const pages = pagesInPart(partId);
-  const [open, setOpen] = useState(defaultOpen);
-  const shown = forceOpen || open;
+  const [open, setOpen] = useState(false);
   const Icon = PART_ICONS[partId];
   const isCurrent = pages.some((p) => p.slug === currentSlug);
   const doneCount = pages.filter((p) => done[p.slug]).length;
@@ -240,7 +232,7 @@ function PartGroup({
           "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-elevated",
           isCurrent && "bg-elevated/70",
         )}
-        aria-expanded={shown}
+        aria-expanded={open}
       >
         <span
           className={cn(
@@ -272,11 +264,11 @@ function PartGroup({
         <ChevronDown
           className={cn(
             "size-3.5 shrink-0 text-subtle transition-transform duration-200 ease-out",
-            shown && "rotate-180",
+            open && "rotate-180",
           )}
         />
       </button>
-      {shown ? (
+      {open ? (
         <ul className="mb-2 ml-5 border-l border-border pl-2">
           {pages.map((page) => {
             const active = page.slug === currentSlug;
