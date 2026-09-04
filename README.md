@@ -4,6 +4,8 @@ FloorKit field edition. From first SSH to a live camera box.
 
 A short Linux handbook for campus and field network engineers who already know switches. Not a sysadmin degree. Not hacking.
 
+Sign in (email or Google) to keep your core-path progress.
+
 ## What’s in it
 
 - **Part 0** — Lab VM, bridged vs NAT, snapshots, SSH
@@ -22,6 +24,8 @@ npm install
 npm run dev
 ```
 
+Set `VITE_PRIVY_APP_ID` and `PRIVY_APP_SECRET` for login + saved progress.
+
 ## License
 
-Private FloorKit field material unless otherwise noted.
+FloorKit field edition. Use it in the closet.
