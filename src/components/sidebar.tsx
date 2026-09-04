@@ -12,7 +12,6 @@ import {
   KeyRound,
   Network,
   PanelLeftClose,
-  PanelLeftOpen,
   Terminal,
   Timer,
 } from "lucide-react";
@@ -48,30 +47,36 @@ export function BrandMark({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex size-8 shrink-0 items-center justify-center rounded-md bg-elevated text-accent shadow-[var(--shadow-border)]",
+        "flex size-8 shrink-0 items-center justify-center rounded-md bg-accent text-accent-fg",
         className,
       )}
       aria-hidden
     >
-      <span className="font-mono text-sm font-medium leading-none">{">"}</span>
+      <svg viewBox="0 0 16 16" className="size-5" fill="none">
+        <path
+          d="M3.5 3.5 L8.25 8 L3.5 12.5"
+          stroke="currentColor"
+          strokeWidth="1.85"
+          strokeLinecap="square"
+          strokeLinejoin="miter"
+        />
+        <rect x="9.25" y="10" width="4" height="2" fill="currentColor" />
+      </svg>
     </span>
   );
 }
 
 export function CollapsedRail({ onOpen }: { onOpen: () => void }) {
   return (
-    <div className="flex h-full flex-col items-center gap-3 bg-surface py-4">
-      <Link to="/" aria-label="Home" className="text-accent no-underline">
-        <BrandMark />
-      </Link>
+    <div className="flex h-full flex-col items-center bg-surface py-3">
       <button
         type="button"
         onClick={onOpen}
         aria-label="Open handbook menu"
         title="Open menu  ["
-        className="flex size-11 items-center justify-center rounded-md text-muted hover:bg-elevated hover:text-fg"
+        className="flex size-11 items-center justify-center rounded-md hover:bg-elevated"
       >
-        <PanelLeftOpen className="size-4" />
+        <BrandMark />
       </button>
     </div>
   );
@@ -112,9 +117,7 @@ export function Sidebar({
     <div className="flex h-full flex-col bg-surface">
       <div className="relative border-b border-border px-4 pb-4 pt-4">
         <div className="flex items-start gap-3">
-          <Link to="/" onClick={onNavigate} className="shrink-0 no-underline">
-            <BrandMark />
-          </Link>
+          <BrandMark />
           <Link
             to="/"
             onClick={onNavigate}
