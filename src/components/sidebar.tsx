@@ -1,16 +1,90 @@
 import { Link } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import {
+  Beaker,
+  BookOpen,
+  Box,
+  Braces,
+  Camera,
+  Check,
+  ChevronDown,
+  ClipboardList,
+  Cpu,
+  KeyRound,
+  Network,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Terminal,
+  Timer,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { PAGES, PARTS, pagesInPart } from "@/lib/handbook";
+import type { PartId } from "@/lib/handbook/types";
 import { useProgress } from "@/lib/progress";
 import { cn } from "@/lib/utils";
+
+const PART_ICONS: Record<PartId, LucideIcon> = {
+  "0": Beaker,
+  "1": Terminal,
+  "2": Cpu,
+  "3": Network,
+  "4": KeyRound,
+  "5": Camera,
+  "6": Box,
+  "7": Timer,
+  "8": ClipboardList,
+  "9": Braces,
+  ref: BookOpen,
+};
+
+const CORE_STEPS: { n: string; slug: string; part: PartId }[] = [
+  { n: "1", slug: "shell", part: "1" },
+  { n: "3", slug: "interfaces", part: "3" },
+  { n: "5", slug: "closet", part: "5" },
+  { n: "7", slug: "drill-cameras-no-net", part: "7" },
+];
+
+export function BrandMark({ className }: { className?: string }) {
+  return (
+    <span
+      className={cn(
+        "flex size-8 shrink-0 items-center justify-center rounded-md bg-elevated text-accent shadow-[var(--shadow-border)]",
+        className,
+      )}
+      aria-hidden
+    >
+      <span className="font-mono text-sm font-medium leading-none">{">"}</span>
+    </span>
+  );
+}
+
+export function CollapsedRail({ onOpen }: { onOpen: () => void }) {
+  return (
+    <div className="flex h-full flex-col items-center gap-3 bg-surface py-4">
+      <Link to="/" aria-label="Home" className="text-accent no-underline">
+        <BrandMark />
+      </Link>
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label="Open handbook menu"
+        title="Open menu  ["
+        className="flex size-11 items-center justify-center rounded-md text-muted hover:bg-elevated hover:text-fg"
+      >
+        <PanelLeftOpen className="size-4" />
+      </button>
+    </div>
+  );
+}
 
 export function Sidebar({
   currentSlug,
   onNavigate,
+  onClose,
 }: {
   currentSlug?: string;
   onNavigate?: () => void;
+  onClose?: () => void;
 }) {
   const done = useProgress((s) => s.done);
   const toggle = useProgress((s) => s.toggle);
@@ -22,27 +96,81 @@ export function Sidebar({
     return { n, total: core.length };
   }, [done]);
 
+  const partProgress = useMemo(() => {
+    const map: Record<string, { done: number; total: number }> = {};
+    for (const step of CORE_STEPS) {
+      const pages = pagesInPart(step.part);
+      map[step.part] = {
+        done: pages.filter((p) => done[p.slug]).length,
+        total: pages.length,
+      };
+    }
+    return map;
+  }, [done]);
+
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-border px-4 py-4">
-        <Link
-          to="/"
-          onClick={onNavigate}
-          className="block text-fg no-underline hover:text-accent"
-        >
-          <span className="block text-[11px] font-medium tracking-[0.18em] text-accent uppercase">
-            FloorKit field edition
+    <div className="flex h-full flex-col bg-surface">
+      <div className="relative border-b border-border px-4 pb-4 pt-4">
+        <div className="flex items-start gap-3">
+          <Link to="/" onClick={onNavigate} className="shrink-0 no-underline">
+            <BrandMark />
+          </Link>
+          <Link
+            to="/"
+            onClick={onNavigate}
+            className="min-w-0 flex-1 text-fg no-underline hover:text-accent"
+          >
+            <span className="block text-xs font-medium tracking-[0.16em] text-accent uppercase">
+              FloorKit
+            </span>
+            <span className="mt-0.5 block text-sm font-medium leading-snug tracking-tight">
+              Linux for Network Engineers
+            </span>
+          </Link>
+          {onClose ? (
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close handbook menu"
+              title="Close menu  ["
+              className="relative -mr-1 -mt-1 flex size-11 shrink-0 items-center justify-center rounded-md text-muted hover:bg-elevated hover:text-fg"
+            >
+              <PanelLeftClose className="size-4" />
+            </button>
+          ) : null}
+        </div>
+
+        <p className="mt-4 text-xs text-muted">
+          Core path{" "}
+          <span className="font-mono tabular-nums text-fg">
+            {coreDone.n}/{coreDone.total}
           </span>
-          <span className="mt-1 block font-medium tracking-tight">
-            Linux for Network Engineers
-          </span>
-        </Link>
-        <p className="mt-3 text-[12px] leading-snug text-muted">
-          Core path {coreDone.n}/{coreDone.total}
-          <span className="mx-1.5 text-subtle">·</span>
-          1 → 3 → 5 → 7
         </p>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-elevated">
+        <div className="mt-2 flex gap-1.5">
+          {CORE_STEPS.map((step) => {
+            const prog = partProgress[step.part];
+            const all = prog && prog.total > 0 && prog.done === prog.total;
+            const some = prog && prog.done > 0 && !all;
+            return (
+              <Link
+                key={step.n}
+                to="/docs/$slug"
+                params={{ slug: step.slug }}
+                onClick={onNavigate}
+                title={`Part ${step.n}`}
+                className={cn(
+                  "flex h-8 flex-1 items-center justify-center rounded-md font-mono text-xs no-underline shadow-[var(--shadow-border)]",
+                  all && "bg-accent text-accent-fg",
+                  some && "bg-elevated text-accent",
+                  !all && !some && "bg-elevated text-muted hover:text-fg",
+                )}
+              >
+                {all ? <Check className="size-3.5" /> : step.n}
+              </Link>
+            );
+          })}
+        </div>
+        <div className="mt-3 h-1 overflow-hidden rounded-full bg-elevated">
           <div
             className="h-full bg-accent transition-[width] duration-300 ease-out"
             style={{
@@ -51,6 +179,7 @@ export function Sidebar({
           />
         </div>
       </div>
+
       <nav className="flex-1 overflow-y-auto px-2 py-3" aria-label="Handbook">
         {PARTS.map((part) => (
           <PartGroup
@@ -65,6 +194,11 @@ export function Sidebar({
           />
         ))}
       </nav>
+
+      <p className="hidden border-t border-border px-4 py-3 text-xs text-subtle lg:block">
+        Press <kbd className="rounded-sm bg-elevated px-1 py-0.5 font-mono text-muted">[</kbd> to
+        close
+      </p>
     </div>
   );
 }
@@ -78,7 +212,7 @@ function PartGroup({
   done,
   onToggleDone,
 }: {
-  partId: (typeof PARTS)[number]["id"];
+  partId: PartId;
   currentSlug?: string;
   forceOpen: boolean;
   defaultOpen: boolean;
@@ -90,31 +224,48 @@ function PartGroup({
   const pages = pagesInPart(partId);
   const [open, setOpen] = useState(defaultOpen);
   const shown = forceOpen || open;
+  const Icon = PART_ICONS[partId];
+  const isCurrent = pages.some((p) => p.slug === currentSlug);
+  const doneCount = pages.filter((p) => done[p.slug]).length;
 
   return (
-    <div className="mb-1">
+    <div className="mb-0.5">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-left hover:bg-elevated"
+        className={cn(
+          "flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left hover:bg-elevated",
+          isCurrent && "bg-elevated/70",
+        )}
         aria-expanded={shown}
       >
-        <span className="w-10 shrink-0 font-mono text-[10px] tabular-nums text-subtle">
-          {part.label.replace("Part ", "P").replace("Ref", "Ref")}
+        <span
+          className={cn(
+            "flex size-7 shrink-0 items-center justify-center rounded-md",
+            isCurrent ? "bg-accent/15 text-accent" : "bg-elevated text-muted",
+          )}
+        >
+          <Icon className="size-3.5" />
         </span>
-        <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-fg">
-          {part.title}
+        <span className="min-w-0 flex-1">
+          <span className="flex items-center gap-2">
+            <span className="truncate text-sm font-medium text-fg">{part.title}</span>
+            {part.core ? (
+              <span className="rounded-full bg-accent/15 px-1.5 py-0.5 text-xs leading-none tracking-wide text-accent uppercase">
+                core
+              </span>
+            ) : null}
+            {part.advanced ? (
+              <span className="rounded-full bg-elevated px-1.5 py-0.5 text-xs leading-none tracking-wide text-muted uppercase">
+                opt
+              </span>
+            ) : null}
+          </span>
+          <span className="block font-mono text-xs tabular-nums text-subtle">
+            {part.label}
+            {doneCount > 0 ? ` · ${doneCount}/${pages.length}` : null}
+          </span>
         </span>
-        {part.core ? (
-          <span className="rounded-full bg-elevated px-1.5 py-0.5 text-[9px] tracking-wide text-accent uppercase">
-            core
-          </span>
-        ) : null}
-        {part.advanced ? (
-          <span className="rounded-full bg-elevated px-1.5 py-0.5 text-[9px] tracking-wide text-muted uppercase">
-            opt
-          </span>
-        ) : null}
         <ChevronDown
           className={cn(
             "size-3.5 shrink-0 text-subtle transition-transform duration-200 ease-out",
@@ -123,38 +274,46 @@ function PartGroup({
         />
       </button>
       {shown ? (
-        <ul className="mb-2 ml-2 border-l border-border pl-1">
+        <ul className="mb-2 ml-5 border-l border-border pl-2">
           {pages.map((page) => {
             const active = page.slug === currentSlug;
+            const isDone = Boolean(done[page.slug]);
             return (
               <li key={page.slug} className="flex items-stretch">
                 <button
                   type="button"
-                  aria-label={done[page.slug] ? "Mark unread" : "Mark read"}
+                  aria-label={isDone ? "Mark unread" : "Mark read"}
                   onClick={() => onToggleDone(page.slug)}
-                  className="flex w-9 shrink-0 items-center justify-center text-subtle hover:text-accent"
+                  className="flex w-8 shrink-0 items-center justify-center text-subtle hover:text-accent"
                 >
                   <span
                     className={cn(
-                      "size-2 rounded-full",
-                      done[page.slug] ? "bg-accent" : "bg-border",
+                      "flex size-4 items-center justify-center rounded-full",
+                      isDone
+                        ? "bg-accent text-accent-fg"
+                        : "shadow-[var(--shadow-border)]",
                     )}
-                  />
+                  >
+                    {isDone ? <Check className="size-2.5" /> : null}
+                  </span>
                 </button>
                 <Link
                   to="/docs/$slug"
                   params={{ slug: page.slug }}
                   onClick={onNavigate}
                   className={cn(
-                    "min-w-0 flex-1 rounded-md px-2 py-1.5 text-[13px] leading-snug no-underline",
+                    "relative min-w-0 flex-1 rounded-md py-1.5 pr-2 pl-2 text-sm leading-snug no-underline",
                     active
-                      ? "bg-elevated text-fg"
+                      ? "bg-elevated font-medium text-fg"
                       : "text-muted hover:bg-elevated/70 hover:text-fg",
                   )}
                 >
+                  {active ? (
+                    <span className="absolute top-1.5 bottom-1.5 left-0 w-0.5 rounded-full bg-accent" />
+                  ) : null}
                   <span className="flex items-baseline gap-2">
                     {page.num ? (
-                      <span className="w-6 shrink-0 font-mono text-[10px] text-subtle">
+                      <span className="w-6 shrink-0 font-mono text-xs text-subtle">
                         {page.num}
                       </span>
                     ) : null}
