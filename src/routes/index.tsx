@@ -8,7 +8,7 @@ import { useProgress } from "@/lib/progress";
 export const Route = createFileRoute("/")({ component: Home });
 
 const CORE = [
-  { n: "01", title: "Noob", blurb: "Shell, files, permissions. Stop panicking.", slug: "shell" },
+  { n: "01", title: "Basics", blurb: "Shell, files, permissions. Stop panicking.", slug: "shell" },
   { n: "03", title: "Network CLI", blurb: "ip, routes, DNS, sockets, tcpdump.", slug: "interfaces" },
   { n: "05", title: "The appliance", blurb: "No-video order. Docker. Disk. GPU last.", slug: "closet" },
   { n: "07", title: "Live drills", blurb: "Ten timed scenarios. Talk out loud.", slug: "drill-cameras-no-net" },

@@ -91,7 +91,7 @@ export const PARTS: PartMeta[] = [
   {
     id: "1",
     label: "Part 1",
-    title: "Noob",
+    title: "Basics",
     blurb: "Shell, files, permissions. Days 1–3.",
     core: true,
   },
