@@ -117,18 +117,23 @@ export function Sidebar({
       <div className="relative border-b border-border px-4 pb-4 pt-4">
         <div className="flex items-start gap-3">
           <BrandMark />
-          <Link
-            to="/"
-            onClick={onNavigate}
-            className="min-w-0 flex-1 text-fg no-underline hover:text-accent"
-          >
-            <span className="block text-xs font-medium tracking-[0.16em] text-accent uppercase">
-              FloorKit
-            </span>
-            <span className="mt-0.5 block text-sm font-medium leading-snug tracking-tight">
+          <div className="min-w-0 flex-1">
+            <Link
+              to="/"
+              onClick={onNavigate}
+              className="block text-sm font-medium leading-snug tracking-tight text-fg no-underline hover:text-accent"
+            >
               Linux for Network Engineers
-            </span>
-          </Link>
+            </Link>
+            <a
+              href="https://getfloorkit.com"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-0.5 inline-block text-xs font-medium tracking-[0.16em] text-accent uppercase no-underline hover:underline"
+            >
+              FloorKit
+            </a>
+          </div>
           {onClose ? (
             <button
               type="button"

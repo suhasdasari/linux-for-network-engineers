@@ -22,12 +22,17 @@ function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <main className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 sm:py-14">
-        <p className="text-xs font-medium tracking-[0.18em] text-accent uppercase">
-          FloorKit field edition
-        </p>
-        <h1 className="mt-3 max-w-[18ch] text-4xl font-medium tracking-tight text-balance sm:text-5xl">
+        <h1 className="max-w-[18ch] text-4xl font-medium tracking-tight text-balance sm:text-5xl">
           Linux for Network Engineers
         </h1>
+        <a
+          href="https://getfloorkit.com"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 inline-block text-xs font-medium tracking-[0.18em] text-accent uppercase no-underline hover:underline"
+        >
+          FloorKit
+        </a>
         <p className="mt-4 max-w-xl text-lg text-muted text-pretty">
           From first SSH to a live camera box.
         </p>
