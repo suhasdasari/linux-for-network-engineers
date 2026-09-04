@@ -59,12 +59,17 @@ function Home() {
           </Link>
         </div>
 
-        {coreDone > 0 ? (
+        {corePages.length > 0 ? (
           <p className="mt-4 text-sm text-muted">
-            Core path progress{" "}
+            Your core path{" "}
             <span className="font-mono tabular-nums text-accent">
               {coreDone}/{corePages.length}
             </span>
+            <span className="mx-1.5 text-subtle">·</span>
+            <span className="font-mono tabular-nums">
+              {PAGES.filter((p) => done[p.slug]).length}/{PAGES.length}
+            </span>{" "}
+            pages
           </p>
         ) : null}
 

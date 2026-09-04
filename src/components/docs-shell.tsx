@@ -3,6 +3,7 @@ import { Menu, Search, X } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { SearchDialog } from "@/components/search-dialog";
 import { CollapsedRail, Sidebar } from "@/components/sidebar";
+import { UserMenu } from "@/components/user-menu";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -92,6 +93,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
         >
           <Search className="size-5" />
         </Button>
+        <UserMenu />
       </header>
 
       <div
@@ -135,7 +137,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
         ) : null}
 
         <div className="flex min-w-0 flex-col">
-          <div className="no-print hidden h-14 items-center justify-end gap-2 border-b border-border px-6 lg:flex">
+          <div className="no-print hidden h-14 items-center justify-end gap-3 border-b border-border px-6 lg:flex">
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -147,6 +149,7 @@ export function DocsShell({ children }: { children: ReactNode }) {
                 ⌘K
               </kbd>
             </button>
+            <UserMenu />
           </div>
           <div id="content" className="flex min-h-[calc(100dvh-3.5rem)] flex-col">
             {children}

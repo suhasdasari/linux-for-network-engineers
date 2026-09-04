@@ -180,4 +180,10 @@ export default defineConfig(({ command, isPreview }) => ({
       : []),
     viteReact(),
   ],
+  optimizeDeps: {
+    include: ["@privy-io/react-auth"],
+  },
+  ssr: {
+    noExternal: ["@privy-io/react-auth"],
+  },
 }));

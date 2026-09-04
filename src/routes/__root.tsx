@@ -1,7 +1,7 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
-import { AuthProvider } from "@/lib/auth/provider";
-import { PreviewHostBridge } from "@/components/preview-host-bridge";
+import { AuthRoot } from "@/components/auth-root";
 import { DocsShell } from "@/components/docs-shell";
+import { PreviewHostBridge } from "@/components/preview-host-bridge";
 import { AppErrorComponent } from "@/lib/error-component";
 import appCss from "../styles.css?url";
 
@@ -45,11 +45,11 @@ function RootDocument() {
       </head>
       <body className="bg-bg text-fg">
         <PreviewHostBridge />
-        <AuthProvider>
+        <AuthRoot>
           <DocsShell>
             <Outlet />
           </DocsShell>
-        </AuthProvider>
+        </AuthRoot>
         <Scripts />
       </body>
     </html>
